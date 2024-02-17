@@ -5,6 +5,8 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import androidx.appcompat.widget.SearchView;
+
 import android.os.Bundle;
 import android.util.Log;
 
@@ -19,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
 
     private CustomeAdapter adapter;
 
+    private SearchView searchView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.rview);
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+
+        searchView = findViewById(R.id.searchView);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -44,7 +50,25 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new CustomeAdapter(dataSet);
         recyclerView.setAdapter(adapter);
+
+        setupSearchView();
+
     }
 
 
+    private void setupSearchView() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.filter(newText);
+                adapter.notifyDataSetChanged();
+                return true;
+            }
+        });
+    }
 }

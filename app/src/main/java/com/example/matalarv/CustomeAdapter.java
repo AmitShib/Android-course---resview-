@@ -1,5 +1,6 @@
 package com.example.matalarv;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +14,13 @@ import java.util.ArrayList;
 
 public class CustomeAdapter extends RecyclerView.Adapter<CustomeAdapter.MyViewHolder> {
 
-    ArrayList<DataModel> dataset;
+    private ArrayList<DataModel> dataset;
+
+    private ArrayList<DataModel> filteredDataSet;
+
     public CustomeAdapter(ArrayList<DataModel> dataSet) {
         this.dataset = dataSet;
+        this.filteredDataSet = new ArrayList<>(dataSet);
     }
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
@@ -51,14 +56,33 @@ public class CustomeAdapter extends RecyclerView.Adapter<CustomeAdapter.MyViewHo
         TextView textViewVersion = holder.textViewVersion;
         ImageView imageView = holder.imageView;
 
-        textViewName.setText(dataset.get(position).getName());
-        textViewVersion.setText((dataset.get(position).getDescription()));
-        imageView.setImageResource(dataset.get(position).getImage());
+        textViewName.setText(filteredDataSet.get(position).getName());
+        textViewVersion.setText((filteredDataSet.get(position).getDescription()));
+        imageView.setImageResource(filteredDataSet.get(position).getImage());
 
     }
 
     @Override
     public int getItemCount() {
-        return dataset.size();
+        return filteredDataSet.size();
+    }
+
+
+    public void filter(String query) {
+        filteredDataSet.clear();
+
+        if (query.isEmpty()) {
+            filteredDataSet.addAll(dataset);
+        } else {
+            // Otherwise, filter data based on query
+            String filterPattern = query.toLowerCase().trim();
+            for (DataModel data : dataset) {
+                if (data.getName().toLowerCase().contains(filterPattern)) {
+                    filteredDataSet.add(data);
+                }
+            }
+        }
+
+        notifyDataSetChanged();
     }
 }
