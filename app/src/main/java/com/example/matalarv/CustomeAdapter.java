@@ -1,5 +1,7 @@
 package com.example.matalarv;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +62,18 @@ public class CustomeAdapter extends RecyclerView.Adapter<CustomeAdapter.MyViewHo
         textViewVersion.setText((filteredDataSet.get(position).getDescription()));
         imageView.setImageResource(filteredDataSet.get(position).getImage());
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int adapterPosition = holder.getAdapterPosition();
+                if (adapterPosition != RecyclerView.NO_POSITION) {
+                    DataModel clickedItem = filteredDataSet.get(adapterPosition);
+
+                    showPopup(holder.itemView.getContext(), clickedItem);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -74,7 +88,6 @@ public class CustomeAdapter extends RecyclerView.Adapter<CustomeAdapter.MyViewHo
         if (query.isEmpty()) {
             filteredDataSet.addAll(dataset);
         } else {
-            // Otherwise, filter data based on query
             String filterPattern = query.toLowerCase().trim();
             for (DataModel data : dataset) {
                 if (data.getName().toLowerCase().contains(filterPattern)) {
@@ -84,5 +97,19 @@ public class CustomeAdapter extends RecyclerView.Adapter<CustomeAdapter.MyViewHo
         }
 
         notifyDataSetChanged();
+    }
+
+    private void showPopup(Context context, DataModel data) {
+        Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.cardlayout);
+
+        TextView textViewName = dialog.findViewById(R.id.textView);
+        TextView textViewDescription = dialog.findViewById(R.id.textView2);
+        ImageView imageView = dialog.findViewById(R.id.imageView);
+        textViewName.setText(data.getName());
+        textViewDescription.setText(data.getDescription());
+        imageView.setImageResource(data.getImage());
+
+        dialog.show();
     }
 }
